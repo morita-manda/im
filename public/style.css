@@ -190,6 +190,7 @@ textarea { resize: vertical; }
 }
 .upload-btn:hover { background: var(--green-dark); }
 .upload-note { font-size: 0.78rem; color: #999; margin-top: 0.5rem; }
+.field-note { font-size: 0.78rem; color: #888; margin-top: 0.3rem; }
 
 #file-list { margin-top: 0.75rem; }
 .file-item {

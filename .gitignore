@@ -1,0 +1,9 @@
+node_modules/
+.env
+tmp-pptx/
+*.log
+ref.pdf
+copy-ref.js
+copy-ref.ps1
+check-slides.ps1
+read-ref.js

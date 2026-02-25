@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IM自動生成 | MANDA Inc.</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <a href="https://manda.bz/" target="_blank" class="logo-link">
+        <img src="logo-header.png" alt="MANDA" class="logo-img" />
+      </a>
+      <span class="header-service-name">企業概要書（IM）自動生成</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>M&amp;A企業概要書を自動作成</h1>
+      <p>会社URLと決算書だけでも、プロ品質の企業概要書(IM)が即できます！</p>
+    </section>
+
+    <form id="im-form" enctype="multipart/form-data">
+      <!-- Step 1 -->
+      <div class="card" id="step1">
+        <div class="step-header">
+          <span class="step-badge">Step 1</span>
+          <h2>基本情報</h2>
+        </div>
+        <div class="form-group">
+          <label for="url">会社のホームページURL <span class="required">*必須</span></label>
+          <input type="url" id="url" name="url" placeholder="https://example.com" required />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="companyName">会社名（任意）</label>
+            <input type="text" id="companyName" name="companyName" placeholder="HPから自動取得" />
+          </div>
+          <div class="form-group">
+            <label for="repName">代表者名（任意）</label>
+            <input type="text" id="repName" name="repName" placeholder="例：山田 太郎" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="card" id="step2">
+        <div class="step-header">
+          <span class="step-badge">Step 2</span>
+          <h2>決算書アップロード</h2>
+        </div>
+        <div class="upload-area" id="upload-area">
+          <div class="upload-icon">📄</div>
+          <p>PDFをここにドラッグ&ドロップ</p>
+          <p class="upload-sub">または</p>
+          <label class="upload-btn" for="pdfs">ファイルを選択</label>
+          <input type="file" id="pdfs" name="pdfs" accept=".pdf" multiple style="display:none" />
+          <p class="upload-note">直近3期分まで対応 / 1ファイル最大20MB</p>
+        </div>
+        <div id="file-list"></div>
+      </div>
+
+      <!-- Step 3: 株主・役員情報 -->
+      <div class="card" id="step3">
+        <div class="step-header">
+          <span class="step-badge">Step 3</span>
+          <h2>株主・役員情報</h2>
+        </div>
+
+        <!-- 株主構成 -->
+        <div class="form-group">
+          <label>株主構成</label>
+          <div id="shareholder-list"></div>
+          <button type="button" class="add-row-btn" id="add-shareholder">+ 株主を追加</button>
+        </div>
+
+        <!-- 従業員内訳 -->
+        <div class="form-row" style="margin-top:1.25rem">
+          <div class="form-group">
+            <label for="empFull">正社員数</label>
+            <input type="text" id="empFull" name="empFull" placeholder="例：15名" />
+          </div>
+          <div class="form-group">
+            <label for="empPart">パート・アルバイト数</label>
+            <input type="text" id="empPart" name="empPart" placeholder="例：8名" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="card" id="step4">
+        <div class="step-header">
+          <span class="step-badge">Step 4</span>
+          <h2>補足情報</h2>
+        </div>
+        <div class="form-group">
+          <label for="reason">譲渡理由</label>
+          <textarea id="reason" name="reason" rows="3" placeholder="例：代表者の体調不良により、後継者への事業承継を検討しています。"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="price">希望譲渡金額</label>
+            <input type="text" id="price" name="price" placeholder="例：5,000万円 または 応相談" />
+          </div>
+          <div class="form-group">
+            <label for="scheme">譲渡スキーム</label>
+            <select id="scheme" name="scheme">
+              <option value="">選択してください</option>
+              <option value="株式譲渡">株式譲渡</option>
+              <option value="事業譲渡">事業譲渡</option>
+              <option value="合併">合併</option>
+              <option value="未定">未定</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="managementIntent">売却後の経営参加の意向</label>
+            <select id="managementIntent" name="managementIntent">
+              <option value="">選択してください</option>
+              <option value="引き続き経営に参加を希望">引き続き経営に参加を希望</option>
+              <option value="経営からは退く予定">経営からは退く予定</option>
+              <option value="一定期間の引継ぎ後に退く予定">一定期間の引継ぎ後に退く予定</option>
+              <option value="条件次第で検討">条件次第で検討</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 生成ボタン -->
+      <div class="submit-area">
+        <p class="privacy-note"><a href="https://manda.bz/about/privacy" target="_blank">プライバシーポリシー</a>に同意の上、</p>
+        <button type="submit" id="submit-btn" class="btn-generate">
+          <span id="btn-text">生成する</span>
+          <span id="btn-loading" style="display:none">生成中...</span>
+        </button>
+        <p class="submit-note">生成には30秒〜2分程度かかります。そのままお待ちください。</p>
+      </div>
+    </form>
+
+    <!-- プログレス -->
+    <div id="progress-area" style="display:none">
+      <div class="progress-card">
+        <div class="spinner"></div>
+        <p id="progress-msg">HPの情報を取得しています...</p>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      </div>
+    </div>
+
+    <!-- 完了 -->
+    <div id="success-area" style="display:none">
+      <div class="success-card">
+        <div class="success-icon">✅</div>
+        <h2 class="success-title">企業概要書を生成しました！</h2>
+        <p class="success-filename" id="success-filename"></p>
+        <p class="success-note">ファイルのダウンロードが完了しました。</p>
+        <button class="btn-generate" onclick="resetForm()">もう一度作成する →</button>
+      </div>
+    </div>
+
+    <!-- エラー -->
+    <div id="error-area" style="display:none">
+      <div class="error-card">
+        <p>⚠️ <span id="error-msg"></span></p>
+        <button class="btn-retry" onclick="resetForm()">もう一度試す</button>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="logo-footer.png" alt="MANDA" class="footer-logo-img" />
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-spacer"></div>
+        <nav class="footer-nav">
+          <a href="https://manda.bz/about/company" target="_blank">会社概要</a>
+          <a href="https://manda.bz/about/terms" target="_blank">利用規約</a>
+          <a href="https://manda.bz/about/privacy" target="_blank">プライバシーポリシー</a>
+          <a href="https://info.manda.bz/" target="_blank">M&amp;A情報</a>
+        </nav>
+        <p class="footer-copy">© MANDA Inc. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

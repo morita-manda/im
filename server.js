@@ -47,14 +47,17 @@ app.post("/api/generate", upload.array("pdfs", 3), async (req, res) => {
     }
 
     // 2. HP情報取得
+    console.log("[Phase 2] Webスクレイピング開始:", url);
     let webInfo = {};
     try {
       webInfo = await scrapeWeb(url);
+      console.log("[Phase 2] スクレイピング完了");
     } catch (e) {
       console.warn("Webスクレイピング失敗（続行）:", e.message);
     }
 
     // 3. Claude APIで構造化
+    console.log("[Phase 3] メインClaude処理開始");
     const structured = await processWithClaude({
       pdfFilePaths: tmpFiles,  // Document API用（スキャンPDF対応）
       pdfTexts,                // メイン生成の会社情報抽出用
@@ -65,9 +68,11 @@ app.post("/api/generate", upload.array("pdfs", 3), async (req, res) => {
     });
 
     // 4. PPTX生成（ユーザー入力の株主・役員情報を直接セット）
+    console.log("[Phase 4] PPTX生成開始");
     if (shareholders.length) structured.shareholders = shareholders;
     structured.employeeBreakdown = { full: empFull || "", part: empPart || "" };
     const buffer = await generateIM(structured);
+    console.log("[Phase 4] PPTX生成完了:", buffer.length, "bytes");
 
     // 5. ファイル返却
     const fileName = `企業概要書_${structured.company.name || "会社名"}.pptx`;

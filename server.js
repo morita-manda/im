@@ -31,7 +31,7 @@ app.post("/api/generate", upload.array("pdfs", 3), async (req, res) => {
   const tmpFiles = (req.files || []).map((f) => f.path);
 
   try {
-    const { url, companyName, repName, reason, price, scheme, managementIntent, empFull, empPart } = req.body;
+    const { url, companyName, repName, tel, reason, price, scheme, managementIntent, empFull, empPart } = req.body;
     const shareholders = JSON.parse(req.body.shareholdersJson || "[]");
 
     if (!url) {
@@ -59,7 +59,7 @@ app.post("/api/generate", upload.array("pdfs", 3), async (req, res) => {
       pdfFilePaths: tmpFiles,  // Document API用（スキャンPDF対応）
       pdfTexts,                // メイン生成の会社情報抽出用
       webInfo,
-      userInput: { url, companyName, repName, reason, price, scheme, managementIntent },
+      userInput: { url, companyName, repName, tel, reason, price, scheme, managementIntent },
       shareholders,
       employeeBreakdown: { full: empFull, part: empPart },
     });

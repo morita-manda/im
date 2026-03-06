@@ -30,6 +30,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // IM生成エンドポイント
 app.post("/api/generate", upload.array("pdfs", 3), async (req, res) => {
   const tmpFiles = (req.files || []).map((f) => f.path);
+  let screenshotPath = null;
 
   try {
     const { url, companyName, repName, tel, reason, price, scheme, managementIntent, empFull, empPart } = req.body;
@@ -50,7 +51,6 @@ app.post("/api/generate", upload.array("pdfs", 3), async (req, res) => {
     // 2. HP情報取得 + スクリーンショット
     console.log("[Phase 2] Webスクレイピング開始:", url);
     let webInfo = {};
-    let screenshotPath = null;
     try {
       webInfo = await scrapeWeb(url);
       console.log("[Phase 2] スクレイピング完了");

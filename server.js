@@ -7,6 +7,7 @@ const os = require("os");
 
 const parsePDF = require("./lib/pdf-parser");
 const scrapeWeb = require("./lib/web-scraper");
+const { captureScreenshot } = require("./lib/web-scraper");
 const processWithClaude = require("./lib/claude-processor");
 const generateIM = require("./lib/pptx-generator");
 
@@ -46,14 +47,22 @@ app.post("/api/generate", upload.array("pdfs", 3), async (req, res) => {
       pdfTexts.push(text);
     }
 
-    // 2. HP情報取得
+    // 2. HP情報取得 + スクリーンショット
     console.log("[Phase 2] Webスクレイピング開始:", url);
     let webInfo = {};
+    let screenshotPath = null;
     try {
       webInfo = await scrapeWeb(url);
       console.log("[Phase 2] スクレイピング完了");
     } catch (e) {
       console.warn("Webスクレイピング失敗（続行）:", e.message);
+    }
+    try {
+      const tmpScreenshot = path.join(os.tmpdir(), `im-screenshot-${Date.now()}.png`);
+      screenshotPath = await captureScreenshot(url, tmpScreenshot);
+      console.log("[Phase 2] スクリーンショット:", screenshotPath ? "成功" : "失敗");
+    } catch (e) {
+      console.warn("スクリーンショット失敗（続行）:", e.message);
     }
 
     // 3. Claude APIで構造化
@@ -71,6 +80,7 @@ app.post("/api/generate", upload.array("pdfs", 3), async (req, res) => {
     console.log("[Phase 4] PPTX生成開始");
     if (shareholders.length) structured.shareholders = shareholders;
     structured.employeeBreakdown = { full: empFull || "", part: empPart || "" };
+    if (screenshotPath) structured.screenshotPath = screenshotPath;
     const buffer = await generateIM(structured);
     console.log("[Phase 4] PPTX生成完了:", buffer.length, "bytes");
 
@@ -87,6 +97,7 @@ app.post("/api/generate", upload.array("pdfs", 3), async (req, res) => {
     for (const f of tmpFiles) {
       fs.unlink(f, () => {});
     }
+    if (screenshotPath) fs.unlink(screenshotPath, () => {});
   }
 });
 

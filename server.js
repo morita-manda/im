@@ -80,7 +80,15 @@ app.post("/api/generate", upload.array("pdfs", 3), async (req, res) => {
     console.log("[Phase 4] PPTX生成開始");
     if (shareholders.length) structured.shareholders = shareholders;
     structured.employeeBreakdown = { full: empFull || "", part: empPart || "" };
-    if (screenshotPath) structured.screenshotPath = screenshotPath;
+    if (screenshotPath) {
+      try {
+        const imgBuf = fs.readFileSync(screenshotPath);
+        structured.screenshotData = `data:image/png;base64,${imgBuf.toString("base64")}`;
+        console.log("[Phase 3] スクリーンショット base64変換完了:", imgBuf.length, "bytes");
+      } catch (e) {
+        console.warn("スクリーンショット読み込み失敗:", e.message);
+      }
+    }
     const buffer = await generateIM(structured);
     console.log("[Phase 4] PPTX生成完了:", buffer.length, "bytes");
 

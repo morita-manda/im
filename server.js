@@ -33,7 +33,7 @@ app.post("/api/generate", upload.array("pdfs", 3), async (req, res) => {
   let screenshotPath = null;
 
   try {
-    const { url, companyName, repName, tel, reason, price, scheme, managementIntent, empFull, empPart } = req.body;
+    const { url, companyName, repName, tel, reason, price, scheme, managementIntent, empFull, empPart, author } = req.body;
     const shareholders = JSON.parse(req.body.shareholdersJson || "[]");
 
     if (!url) {
@@ -80,6 +80,7 @@ app.post("/api/generate", upload.array("pdfs", 3), async (req, res) => {
     console.log("[Phase 4] PPTX生成開始");
     if (shareholders.length) structured.shareholders = shareholders;
     structured.employeeBreakdown = { full: empFull || "", part: empPart || "" };
+    structured.author = author || "MANDA";
     if (screenshotPath) {
       try {
         const imgBuf = fs.readFileSync(screenshotPath);

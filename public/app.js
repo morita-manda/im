@@ -140,6 +140,7 @@
     formData.append("shareholdersJson", JSON.stringify(collectRows("shareholder-list", ["name", "ratio"])));
     formData.append("empFull", document.getElementById("empFull").value.trim());
     formData.append("empPart", document.getElementById("empPart").value.trim());
+    formData.append("author", document.getElementById("author").value.trim());
     selectedFiles.forEach((f) => formData.append("pdfs", f));
 
     try {

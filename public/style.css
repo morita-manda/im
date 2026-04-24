@@ -427,6 +427,14 @@ footer {
 }
 
 @media (max-width: 600px) {
+  header { padding: 0 1rem; }
+  .logo-img { height: 36px; }
+  .header-service-name {
+    font-size: 0.72rem;
+    padding-left: 0.75rem;
+    margin-left: 0.75rem;
+    white-space: normal;
+  }
   .card { padding: 1.25rem 1rem; }
   .form-row { flex-direction: column; }
   .hero h1 { font-size: 1.4rem; }
